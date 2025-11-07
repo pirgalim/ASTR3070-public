@@ -1,8 +1,11 @@
-
+# ASTR 3070 Assignment 1
 
 ### Setup
 
-1. Try running a1.ipynb right away
-2. If you get a "module not found" simply 'pip install [module name]'
+Try running a1.ipynb, if you get a "module not found" simply 'pip install [module name]'
 
-
+Some packages you may need to install:
+- astroalign
+- astropy
+- numpy
+- pandas
