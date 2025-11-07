@@ -12,29 +12,22 @@ import pandas as pd
 from astropy.io import fits
 
 
-
 def fetch_filenames(dir: str) -> list[str]:
     """Fetches a list of filenames from a directory
-
     Args:
         dir (str): path of the file directory
-
     Returns:
         list[str]: list of filenames
     """
     try:
-        filenames = []
-        
+        filenames = []  
         for item in os.scandir(dir):
             if item.is_file() and _check_truncated(item):
-                filenames.append(item) 
-                    
+                filenames.append(item)                  
         print(f"{len(filenames)} files retrived from {dir}")
         return filenames
-    
     except:
         print("Directory not found.")
-
 
 
 def _check_truncated(file):
