@@ -76,7 +76,7 @@ def stack_master(files: list) -> np.array:
 
 
 
-def make_header_data_lists(light: list[str], dark: np.array, flat_bias: np.array) -> list[np.array]:
+def calibrate_lights(light: list[str], dark: np.array, flat_bias: np.array) -> list[np.array]:
     """Applies dark and bias/flat corrections to individual light frames 
 
     Args:
