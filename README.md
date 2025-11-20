@@ -5,5 +5,5 @@
 
 Create venv (instuctions to follow)
 
-Run 'pip install requirments.txt' in the venv terminal
+Run 'pip install -r requirments.txt' in the venv terminal
 
