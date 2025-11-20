@@ -4,7 +4,7 @@ matplotlib>=3.8
 scipy>=1.11
 
 # Astronomy libraries
-astropy>=6.1
+astropy>=5.3.4
 photutils>=2.2.0
 astroalign>=2.6.2
-astroquery==0.4.11
+twirl==0.4.2
