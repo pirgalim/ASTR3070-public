@@ -1,6 +1,6 @@
 """UNIVERSITY OF MANITOBA
 COURSE: ASTR 3070
-DATE: Fall 2025
+DATE: Fall 2026
 INSTRUCTOR: Tyrone Woods
 AUTHORS: Mark Pirgalin, Jade Yeung (attributed)
 """
@@ -32,10 +32,10 @@ def fetch_filenames(dir: str) -> list[str]:
 def _check_truncated(file):
     
     # prevent corrupt header files
-    hdr = fits.open(file)[0].header
-    naxis1 = hdr.get('NAXIS1')
-    naxis2 = hdr.get('NAXIS2')
-    bitpix = hdr.get('BITPIX')
+    hdu = fits.open(file)[0].header
+    naxis1 = hdu.get('NAXIS1')
+    naxis2 = hdu.get('NAXIS2')
+    bitpix = hdu.get('BITPIX')
     
     expected_size = naxis1 * naxis2 * (bitpix/8)  # pixels * bytes
     actual_size = os.path.getsize(file)
@@ -56,26 +56,23 @@ def stack_master(files: list) -> np.array:
     base = fits.open(files[0])
     data = base[0].data
     
-    width = len(data[0])
-    height = len(data)
-    
-    master_img = np.zeros((height, width))
+    master = np.zeros(data.shape)
     count = 0
     
     for file in files:
         count += 1
-        imgs = fits.open(file)
-        img_data = imgs[0].data
-        master_img = master_img + img_data
+        hdu = fits.open(file)
+        hdu_data = hdu[0].data
+        master = master + hdu_data
 
     # average normalization
-    master_img = master_img / count
+    master = master / count
 
-    return master_img
+    return master
 
 
 
-def calibrate_lights(light: list[str], dark: np.array, flat_bias: np.array) -> list[np.array]:
+def calibrate_lights(lights: list[str], dark: np.array, flat_bias: np.array) -> list[np.array]:
     """Applies dark and bias/flat corrections to individual light frames. 
 
     Args:
@@ -88,9 +85,9 @@ def calibrate_lights(light: list[str], dark: np.array, flat_bias: np.array) -> l
     """
     corr_HDU_list = []
     
-    for file in light:
-        light_imgs = fits.open(file)
-        light_data = light_imgs[0].data
+    for file in lights:
+        light = fits.open(file)
+        light_data = light[0].data
         light_corr = (light_data - dark) / flat_bias
         corr_HDU_list.append(light_corr)
         
@@ -112,7 +109,7 @@ def align_images(nights: list[np.array], ref_image: np.array) -> np.array:
     master_image = np.zeros(ref_image.shape)
     count = 0
     
-    for hdu_list in lights:
+    for hdu_list in nights:
         
         for image in hdu_list:
             
