@@ -95,7 +95,7 @@ def calibrate_lights(lights: list[str], dark: np.array, flat_bias: np.array) -> 
 
 
 
-def align_images(nights: list[np.array], ref_image: np.array) -> np.array:
+def align_images(nights: list[list[np.array]], ref_image: np.array) -> np.array:
     """Aligns images from multiple nights. 
     
     Args:
@@ -106,7 +106,7 @@ def align_images(nights: list[np.array], ref_image: np.array) -> np.array:
         np.array: aligned master stack array
     """
         
-    master_image = np.zeros(ref_image.shape)
+    master = np.zeros(ref_image.shape)
     count = 0
     
     for hdu_list in nights:
@@ -115,6 +115,6 @@ def align_images(nights: list[np.array], ref_image: np.array) -> np.array:
             
             count+=1
             aligned_image, _ = align.register(image, ref_image)
-            master_image += aligned_image
+            master += aligned_image
             
-    return master_image/count, count
+    return master/count, count
