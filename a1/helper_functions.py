@@ -99,7 +99,7 @@ def align_images(nights: list[list[np.array]], ref_image: np.array) -> np.array:
     """Aligns images from multiple nights. 
     
     Args:
-        nights (list[np.array]): list of calibrated sequences from each night
+        nights (list[list[np.array]]): list of calibrated sequences from each night
         reference_image (np.array): image to use as reference for alignment
 
     Returns:
