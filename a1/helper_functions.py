@@ -8,7 +8,6 @@ AUTHORS: Mark Pirgalin, Jade Yeung (attributed)
 import os
 import numpy as np
 import astroalign as align
-import pandas as pd
 from astropy.io import fits
 
 
