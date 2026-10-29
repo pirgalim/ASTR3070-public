@@ -98,11 +98,11 @@ def calibrate_lights(light: list[str], dark: np.array, flat_bias: np.array) -> l
 
 
 
-def align_images(lights: list[np.array], ref_image: np.array) -> np.array:
+def align_images(nights: list[np.array], ref_image: np.array) -> np.array:
     """Aligns images from multiple nights. 
     
     Args:
-        list_of_image_hdus (list[np.array]): list of calibrated lights from each night
+        nights (list[np.array]): list of calibrated sequences from each night
         reference_image (np.array): image to use as reference for alignment
 
     Returns:
