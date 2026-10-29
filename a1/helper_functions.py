@@ -77,7 +77,7 @@ def stack_master(files: list) -> np.array:
 
 
 def calibrate_lights(light: list[str], dark: np.array, flat_bias: np.array) -> list[np.array]:
-    """Applies dark and bias/flat corrections to individual light frames 
+    """Applies dark and bias/flat corrections to individual light frames. 
 
     Args:
         light (list[str]): list of light frames
@@ -99,70 +99,26 @@ def calibrate_lights(light: list[str], dark: np.array, flat_bias: np.array) -> l
 
 
 
-def align_image(list_of_images1: np.array, list_of_images2: np.array, reference_image: np.array) -> np.array:
-    """Aligns images from two nights. 
-    - To use with one night, use the same list in both parameters and divide the returned array by 2
-    - To use with multiple nights, use the returned array as one parameter and the next night of images as the second, then repeat as needed
+def align_images(lights: list[np.array], ref_image: np.array) -> np.array:
+    """Aligns images from multiple nights. 
+    
     Args:
-        list_of_images1 (np.array): images from first night
-        list_of_images2 (np.array): images from second night
+        list_of_image_hdus (list[np.array]): list of calibrated lights from each night
         reference_image (np.array): image to use as reference for alignment
 
     Returns:
         np.array: aligned master stack array
     """
+        
+    master_image = np.zeros(ref_image.shape)
+    count = 0
     
-    height=len(reference_image[:,0])
-    width=len(reference_image[0,:])
-    master_image=np.zeros((height, width))
-    count=0
-
-    image_list1=[]
-    image_list2=[]
-
-    for image in list_of_images1:
-        count+=1
-        aligned_image, _ = align.register(image, reference_image)
-        master_image = master_image+aligned_image
-
-    for image in list_of_images2:
-        count+=1
-        aligned_image, _ = align.register(image, reference_image)
-        master_image = master_image+aligned_image
-
+    for hdu_list in lights:
+        
+        for image in hdu_list:
+            
+            count+=1
+            aligned_image, _ = align.register(image, ref_image)
+            master_image += aligned_image
+            
     return master_image/count, count
-
-
-
-def create_table(pos_filename: str, pho_filename: str, sep_pos = '\s{2,}', sep_mag = '\s+') -> pd.DataFrame:
-    """
-    Create a table from .pos and .pho files
-
-    Args:
-        pos_filename (str): given .pos (coordinates) file
-        pho_filename (str): given .pho (magnitudes) file
-        sep_pos (str, optional): modify if the data is not separated correctly. Defaults to '\s{2,}'
-        sep_mag (str, optional): modify if the data is not separated correctly. Defaults to '\s+'
-
-    Returns:
-        pd.DataFrame: Stetson table with Reference, RA, DEC, R mags, and B mags
-    """
-
-    # pos file needs to be cleaned
-    df_pos = pd.read_csv(pos_filename, sep=sep_pos, comment="#", engine='python')   
-    df_pos.columns = ['RA', 'DEC'] + ['' for i in range(3, df_pos.shape[1])] + ['Reference']
-    
-    # format negative values if applicable
-    for col in df_pos.columns:
-        try:
-            df_pos[col] = df_pos[col].str.replace(" ", "").astype(float)    # convert negative values to floats
-        except:
-            print("Column formatting may have been unsuccessful, print the table to ensure data is displayed correctly.")
-     
-    # mag file
-    df_mag = pd.read_csv(pho_filename, sep=sep_mag, comment="#", engine='python')
-    
-    # join tables
-    stetson = pd.merge(df_pos[['Reference', 'RA', 'DEC']], df_mag[['Reference', 'R', 'B']], how='inner', on=['Reference'])
-    
-    return stetson
