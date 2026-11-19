@@ -8,4 +8,4 @@
 
 - Run 'pip install -r requirments.txt' in the venv terminal
 
-- Ensure that *helper_functions.py* is located in the same folder as your working notebook
+- Ensure that *helper_functions.py* is located in the same folder as your working notebook if it is required
